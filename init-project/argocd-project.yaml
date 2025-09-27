@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: devops-learn # Nama Project ArgoCD Anda
+  namespace: argocd
+spec:
+  description: Project for the user microservices deployment
+  # Destinations: Cluster dan namespace tempat deployment diizinkan
+  destinations:
+    - server: https://kubernetes.default.svc # Server Minikube
+      namespace: devops-learn # Namespace target
+  # Source Repositories: Repositori yang diizinkan untuk source code
+  sourceRepos:
+    - "*" # Izinkan dari semua repository
+  # Roles: Anda dapat mendefinisikan RBAC di sini, tapi default sudah cukup

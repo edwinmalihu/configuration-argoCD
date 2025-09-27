@@ -1,0 +1,84 @@
+# 1. Kubernetes Service (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-reader-service
+  namespace: devops-learn
+  labels:
+    app: user-reader
+    service: user-reader
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: http-port
+      protocol: TCP
+  selector:
+    app: user-reader
+---
+# 2. Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-reader-deployment
+  namespace: devops-learn
+  labels:
+    app: user-reader
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-reader
+  template:
+    metadata:
+      labels:
+        app: user-reader
+        version: v1
+    spec:
+      containers:
+        - name: user-reader-app
+          image: "{IMAGE}"
+          ports:
+            - containerPort: 8081
+          env:
+            - name: POSTGRES_HOST
+              value: "localhost"
+            - name: POSTGRES_USER
+              value: "user"
+            - name: POSTGRES_PASSWORD
+              value: "password"
+            - name: POSTGRES_DB
+              value: "mydb"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+          livenessProbe:
+            httpGet:
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+# 3. Horizontal Pod Autoscaler (HPA)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: user-reader-hpa
+  namespace: devops-learn
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: user-reader-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

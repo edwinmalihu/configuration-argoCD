@@ -1,0 +1,52 @@
+# 1. Istio Gateway
+# Menangkap traffic masuk dari luar cluster (Load Balancer)
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: user-microservices-gateway
+  namespace: devops-learn
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+# 2. Istio VirtualService
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: user-microservices-vs
+  namespace: devops-learn
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - user-microservices-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /api/users
+        - method:
+            exact: POST
+      route:
+        - destination:
+            host: user-creator-service.devops-learn.svc.cluster.local
+            port:
+              number: 8081
+          weight: 50
+    - match:
+        - uri:
+            prefix: /api/users
+        - method:
+            exact: GET
+      route:
+        - destination:
+            host: user-reader-service.devops-learn.svc.cluster.local
+            port:
+              number: 8081
+          weight: 50

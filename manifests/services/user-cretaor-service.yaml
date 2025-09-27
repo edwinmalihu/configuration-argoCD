@@ -1,0 +1,84 @@
+# 1. Kubernetes Service (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-creator-service
+  namespace: devops-learn
+  labels:
+    app: user-creator
+    service: user-creator
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      name: http-port
+      protocol: TCP
+  selector:
+    app: user-creator
+---
+# 2. Kubernetes Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-creator-deployment
+  namespace: devops-learn
+  labels:
+    app: user-creator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-creator
+  template:
+    metadata:
+      labels:
+        app: user-creator
+        version: v1 # Label versi penting untuk routing Istio
+    spec:
+      containers:
+        - name: user-creator-app
+          image: "{IMAGE}"
+          ports:
+            - containerPort: 8081
+          env:
+            - name: POSTGRES_HOST
+              value: "localhost"
+            - name: POSTGRES_USER
+              value: "user"
+            - name: POSTGRES_PASSWORD
+              value: "password"
+            - name: POSTGRES_DB
+              value: "mydb"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+          livenessProbe:
+            httpGet:
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 5
+---
+# 3. Horizontal Pod Autoscaler (HPA)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: user-creator-hpa
+  namespace: devops-learn
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: user-creator-deployment
+  minReplicas: 2
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
