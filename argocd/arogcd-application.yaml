@@ -18,7 +18,7 @@ spec:
   # Konfigurasi repositori sumber (tempat manifest berada)
   source:
     # URL repositori GitLab Anda
-    repoURL: "https://github.com/edwinmalihu/devops-learn-configuration.git"
+    repoURL: "https://github.com/edwinmalihu/configuration-argoCD.git"
     # Jalur ke direktori manifest untuk config-service
     path: manifests/services
     # Branch atau tag yang ingin disinkronkan
