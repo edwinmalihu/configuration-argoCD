@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: user-creator-app
-          image: "{IMAGE}"
+          image: "edwinmalihu/user-creator-service:latest"
           ports:
             - containerPort: 8081
           env:
