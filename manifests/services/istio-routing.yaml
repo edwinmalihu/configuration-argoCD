@@ -49,4 +49,4 @@ spec:
             host: user-creator-service.devops-learn.svc.cluster.local
             port:
               number: 8081
-          weight: 100
+          weight: 0
