@@ -42,7 +42,7 @@ spec:
             - containerPort: 8081
           env:
             - name: POSTGRES_HOST
-              value: "localhost"
+              value: "host.minikube.internal"
             - name: POSTGRES_USER
               value: "user"
             - name: POSTGRES_PASSWORD
