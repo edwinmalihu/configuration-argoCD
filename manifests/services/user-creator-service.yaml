@@ -42,7 +42,7 @@ spec:
             - containerPort: 8081
           env:
             - name: POSTGRES_HOST
-              value: "host.minikube.internal"
+              value: "host.lima.internal"
             - name: POSTGRES_USER
               value: "user"
             - name: POSTGRES_PASSWORD
