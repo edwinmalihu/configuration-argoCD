@@ -32,10 +32,10 @@ spec:
         - uri:
             prefix: /api/users
         - method:
-            exact: POST
+            exact: GET
       route:
         - destination:
-            host: user-creator-service.devops-learn.svc.cluster.local
+            host: user-reader-service.devops-learn.svc.cluster.local
             port:
               number: 8081
           weight: 50
@@ -43,10 +43,10 @@ spec:
         - uri:
             prefix: /api/users
         - method:
-            exact: GET
+            exact: POST
       route:
         - destination:
-            host: user-reader-service.devops-learn.svc.cluster.local
+            host: user-creator-service.devops-learn.svc.cluster.local
             port:
               number: 8081
           weight: 50
